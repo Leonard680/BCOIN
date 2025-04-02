@@ -1,0 +1,176 @@
+<!DOCTYPE html><html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>B-COIN Tap & Earn</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+            background-color: purple;
+            margin: 0;
+            padding: 20px;
+            color: white;
+        }
+        .balance {
+            font-size: 24px;
+            color: yellow;
+            font-weight: bold;
+            background: black;
+            padding: 10px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+        }
+        .tap-btn {
+            width: 120px;
+            height: 120px;
+            font-size: 40px;
+            font-weight: bold;
+            background-color: blue;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            margin-top: 100px;
+            cursor: pointer;
+        }
+        #countdown-container {
+            display: none;
+            margin-top: 50px;
+        }
+        #back-btn {
+            display: none;
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: green;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .section {
+            margin-top: 50px;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            color: black;
+        }
+        .button {
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: orange;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body onload="loadBalance()">
+    <div class="balance">Balance: <span id="balance">0</span> B-COIN</div>
+    <button class="tap-btn" onclick="tap()">B</button><div id="countdown-container">
+    <p>You will be redirected in <span id="countdown">10</span> seconds...</p>
+    <button id="back-btn" onclick="goBack()">Go Back</button>
+</div>
+
+<div class="section">
+    <h2>B-COIN Faucet</h2>
+    <p>Earn 1000 B-COIN every 10 seconds</p>
+    <button class="button" onclick="claimFaucet()" id="faucet-btn">Claim</button>
+    <p id="faucet-timer"></p>
+</div>
+
+<div class="section">
+    <h2>Monthly B-COIN Airdrop Challenge</h2>
+    <p>Do the challenge, earn up to 100M B-COIN every month, and win!</p>
+    <p>1st place: $10 (15,000,000 B-COIN)</p>
+    <p>2nd place: $5 (7,500,000 B-COIN)</p>
+    <p>3rd place: $3 (4,500,000 B-COIN)</p>
+    <button class="button" onclick="startChallenge()">Start Challenge</button>
+</div>
+
+<div class="section">
+    <h2>Airdrop Eligibility</h2>
+    <p>1. Have at least 1,000,000,000 B-COIN</p>
+    <p>2. Take part in the challenge, it's not necessary to win but is necessary to participate</p>
+    <p>3. Do not create multiple accounts</p>
+</div>
+
+<script>
+    let balance = localStorage.getItem("balance") ? parseInt(localStorage.getItem("balance")) : 0;
+    let tapCount = 0;
+    const redirectUrl = "https://kiddyearner.com/?r=Leonard680";
+    let faucetCooldown = false;
+
+    function loadBalance() {
+        document.getElementById("balance").innerText = balance;
+    }
+
+    function tap() {
+        balance += 100;
+        tapCount++;
+        document.getElementById("balance").innerText = balance;
+        localStorage.setItem("balance", balance);
+
+        if (tapCount % 5 === 0) {
+            showCountdown();
+        }
+    }
+
+    function showCountdown() {
+        document.body.innerHTML = '<div id="countdown-container">' +
+            '<p>You will be redirected in <span id="countdown">10</span> seconds...</p>' +
+            '<button id="back-btn" onclick="goBack()" style="display: none;">Go Back</button>' +
+            '</div>';
+        
+        let countdown = 10;
+        let countdownInterval = setInterval(() => {
+            countdown--;
+            document.getElementById("countdown").innerText = countdown;
+            if (countdown <= 0) {
+                clearInterval(countdownInterval);
+                document.getElementById("back-btn").style.display = "block";
+            }
+        }, 1000);
+        
+        setTimeout(() => {
+            window.location.href = redirectUrl;
+        }, 1000);
+    }
+
+    function goBack() {
+        location.reload();
+    }
+
+    function claimFaucet() {
+        if (faucetCooldown) return;
+        balance += 1000;
+        document.getElementById("balance").innerText = balance;
+        localStorage.setItem("balance", balance);
+        alert("You are redirected to an app you can come back if you like");
+        window.location.href = redirectUrl;
+        
+        faucetCooldown = true;
+        document.getElementById("faucet-btn").disabled = true;
+        let timer = 10;
+        document.getElementById("faucet-timer").innerText = `Next claim in ${timer} seconds...`;
+        let interval = setInterval(() => {
+            timer--;
+            document.getElementById("faucet-timer").innerText = `Next claim in ${timer} seconds...`;
+            if (timer <= 0) {
+                clearInterval(interval);
+                faucetCooldown = false;
+                document.getElementById("faucet-btn").disabled = false;
+                document.getElementById("faucet-timer").innerText = "";
+            }
+        }, 1000);
+    }
+
+    function startChallenge() {
+        window.location.href = redirectUrl;
+    }
+</script>
+
+</body>
+</html>
